@@ -21,6 +21,11 @@ import logging
 
 from vsc.utils.py2vs3 import HTTPError
 
+try:
+    from httplib import InvalidURL  # python 2
+except ImportError:
+    from http.client import InvalidURL
+
 import pytz as timezone
 from datetime import datetime
 
@@ -201,6 +206,10 @@ class LdapSyncer(object):
                 # if a 404 occured, the group is not an VO, so we skip this. Otherwise something else went wrong.
                 if err.code != 404:
                     logging.raiseException("Retrieval of group VO failed for unexpected reasons")
+            except InvalidURL as err:
+                # VO status cannot be checked because group name is malformed, assuming this group is not a VO
+                logging.debug("Group with malformed name, assuming '%s' is not a VO", group.vsc_id)
+                pass
             else:
                 # Group is a VO
                 ldap_attributes['fairshare'] = ["%d" % (vo.fairshare,)]
