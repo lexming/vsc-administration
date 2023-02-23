@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2022 Ghent University
+# Copyright 2013-2023 Ghent University
 #
 # This file is part of vsc-administration,
 # originally created by the HPC team of Ghent University (http://ugent.be/hpc/en),
@@ -359,7 +359,6 @@ def slurm_user_accounts(vo_members, active_accounts, slurm_user_info, clusters, 
                         except KeyError as err:
                             logging.warning("Dry run, cannot find up user %s in reverse VO map: %s",
                                             user, err)
-
 
         logging.debug("%d new users", len(new_users))
         logging.debug("%d removed users", len(remove_users))

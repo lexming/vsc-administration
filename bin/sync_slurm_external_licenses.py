@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright 2013-2022 Ghent University
+# Copyright 2013-2023 Ghent University
 #
 # This file is part of vsc-administration,
 # originally created by the HPC team of Ghent University (http://ugent.be/hpc/en),
@@ -235,7 +235,7 @@ def update_licenses(licenses, clusters, ignore_resources, force_update):
         # Default supported modification is updated count
         if force_update or lic['count'] != info[name].Count:
             new_update_cmds.append(create_modify_resource_license_command(
-                lic['name'], lic['extern'], lic['type'], clusters, lic['count']))
+                lic['name'], lic['extern'], lic['type'], lic['count']))
 
     # Cleanup licenses
     remove_cmds = []

@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2022 Ghent University
+# Copyright 2013-2023 Ghent University
 #
 # This file is part of vsc-administration,
 # originally created by the HPC team of Ghent University (http://ugent.be/hpc/en),
@@ -46,7 +46,7 @@ class SacctMgrTypes(Enum):
     resource = "resource"
 
 
-# Fields for Slurm 20.11.
+# Fields for Slurm 21.08.
 # FIXME: at some point this should be versioned
 
 SacctUserFields = [
@@ -56,7 +56,7 @@ SacctUserFields = [
 ]
 
 SacctAccountFields = [
-    "Account", "Descr", "Org", "Cluster", "Par_Name", "User", "Share",
+    "Account", "Descr", "Org", "Cluster", "ParentName", "User", "Share",
     "GrpJobs", "GrpNodes", "GrpCPUs", "GrpMem", "GrpSubmit", "GrpWall", "GrpCPUMins",
     "MaxJobs", "MaxNodes", "MaxCPUs", "MaxSubmit", "MaxWall", "MaxCPUMins",
     "QOS", "Def_QOS"
@@ -495,22 +495,19 @@ def create_remove_resource_license_command(name, server, stype):
 
 
 @mksacctmgr('modify')
-def create_modify_resource_license_command(name, server, stype, clusters, count):
-    """Create the command to add a license resource
+def create_modify_resource_license_command(name, server, stype, count):
+    """Create the command to modify a license resource
 
     @returns: the list comprising the command
     """
     command = [
         "resource",
-        "where"
-        "Type=license",
+        "where",
         "Name={0}".format(name),
         "Server={0}".format(server),
         "ServerType={0}".format(stype),
         "set",
-        "Cluster={0}".format(",".join(clusters)),
         "Count={0}".format(count),
-        "PercentAllowed=100",
     ]
 
     return command
