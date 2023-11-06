@@ -28,7 +28,7 @@ from vsc.utils.run import asyncloop
 
 SLURM_SCONTROL = "/usr/bin/scontrol"
 
-SLURM_SCONTROL_CONFIG_REGEX = re.compile("^(.*\S)\s+=\s+(\S.*)$")
+SLURM_SCONTROL_CONFIG_REGEX = re.compile(r"^(.*\S)\s+=\s+(\S.*)$")
 
 
 LICENSE_RESERVATION_PREFIX = 'external_license_'
@@ -86,7 +86,7 @@ def mkSlurmLicense(fields):
 
 def mkSlurmConfig(fields):
     """Make a named tuple from the given fields"""
-    filtered = dict([(k, v) for k, v in fields.items() if k in ScontrolConfigFields])
+    filtered = {k: v for k, v in fields.items() if k in ScontrolConfigFields}
     config = mkNamedTupleInstance(filtered, SlurmConfig)
     return config
 
@@ -188,8 +188,8 @@ def get_scontrol_info(info_type, as_dict=True):
     info = parse_scontrol_dump(lines, info_type)
 
     if as_dict:
-        field = "%sName" % info_type.value.capitalize()
-        info = dict([(getattr(x, field), x) for x in info])
+        field = f"{info_type.value.capitalize()}Name"
+        info = {getattr(x, field): x for x in info}
 
     return info
 
@@ -206,7 +206,7 @@ def make_license_reservation_name(licname):
 
 def _settings_args(settings):
     """Convert settings dict in k=v list"""
-    return ["{0}={1}".format(k, settings[k]) for k in sorted(settings.keys())]
+    return [f"{k}={settings[k]}" for k in sorted(settings.keys())]
 
 
 @mkscontrol('create')
@@ -216,7 +216,7 @@ def create_create_reservation(reservation, settings):
     """
     command = [
         'reservation',
-        'ReservationName={0}'.format(reservation),
+        f'ReservationName={reservation}',
     ]
     command.extend(_settings_args(settings))
 
@@ -230,7 +230,7 @@ def create_update_reservation(reservation, settings):
     """
     command = [
         'reservation',
-        'ReservationName={0}'.format(reservation),
+        f'ReservationName={reservation}',
     ]
 
     command.extend(_settings_args(settings))
@@ -245,7 +245,7 @@ def create_delete_reservation(reservation):
     """
     command = [
         'reservation',
-        'ReservationName={0}'.format(reservation),
+        f'ReservationName={reservation}',
     ]
     return command
 
@@ -258,7 +258,7 @@ def create_create_license_reservation(licname, value, partition):
     # infinite/unlimited means 1 year
     days = 20 * 365
     settings = {
-        'Licenses': '{0}:{1}'.format(licname, value),
+        'Licenses': f'{licname}:{value}',
         'Partition': partition,
         'Start': 'now',
         'Duration': f'{days}-0:0:0',
@@ -276,6 +276,6 @@ def create_update_license_reservation(licname, value):
     """
     name = make_license_reservation_name(licname)
     settings = {
-        'Licenses': '{0}:{1}'.format(licname, value),
+        'Licenses': f'{licname}:{value}',
     }
     return create_update_reservation(name, settings)

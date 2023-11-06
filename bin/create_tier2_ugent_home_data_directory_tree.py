@@ -66,7 +66,7 @@ def main():
 
     storage_settings = VscStorage()
 
-    local_storage_conf = configparser.SafeConfigParser()
+    local_storage_conf = configparser.ConfigParser()
     local_storage_conf.read(QUOTA_CONF_FILE)
 
     gpfs = GpfsOperations()
