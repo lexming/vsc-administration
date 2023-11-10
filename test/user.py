@@ -148,7 +148,8 @@ test_usergroup_1 = {
     "moderators": [
         "vsc40075"
     ],
-    "description": "Nope"
+    "description": "Nope",
+    "isactive": True
 }
 
 test_admin_group_1 = {
@@ -160,7 +161,8 @@ test_admin_group_1 = {
     },
     "members": [],
     "moderators": [],
-    "description": ""
+    "description": "",
+    "isactive": True
 }
 
 test_pubkeys_1 = [

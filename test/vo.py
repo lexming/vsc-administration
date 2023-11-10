@@ -276,7 +276,10 @@ class VoDeploymentTest(TestCase):
                                             vsc_id_number=123456,
                                             institute='Gent',
                                             members=['vsc40075'],
-                                            description="test autogroup"
+                                            description="test autogroup",
+                                            isactive=True,
+                                            moderators=['vsc40075'],
+                                            sources=[],
                                         )
                                         ok, errors = vo.process_vos(options, [test_vo_id], storage_name, mc, "99991231")
                                         self.assertEqual(errors, {})
@@ -322,7 +325,10 @@ class VoDeploymentTest(TestCase):
                         vsc_id_number=123456,
                         institute='Gent',
                         members=['vsc40075'],
-                        description="test autogroup"
+                        description="test autogroup",
+                        moderators=['vsc40075'],
+                        isactive=True,
+                        sources=[],
                     )
 
                     test_vo.create_data_shared_fileset()
@@ -366,6 +372,7 @@ class VoDeploymentTest(TestCase):
                 "realeppn": "wapoelma@vub.ac.be",
             },
             "home_on_scratch": False,
+            "isactive": True,
         }
         mc.account[account_1["vsc_id"]].get.return_value = (200, account_1)
         mc.vo[test_vo_id].member.modified[date].get.return_value = (200, [account_1])
@@ -382,6 +389,7 @@ class VoDeploymentTest(TestCase):
                 "description": "hpcvub",
                 "members": ["vsc10001", "vsc10003"],
                 "moderators": ["vsc10001"],
+                "isactive": True,
             },
         )
         mc.vo[test_vo_id].quota.get.return_value = (
@@ -716,6 +724,7 @@ class VoDeploymentTest(TestCase):
                     "vsc41420",
                 ],
                 "moderators": [],
+                "isactive": True,
             },
         )
         mc.vo[test_vo_id].quota.get.return_value = (

@@ -166,6 +166,7 @@ class VscTier2AccountpageVo(VscAccountPageVo):
     def data_sharing(self):
         return self.vo_data_shared_quota is not None
 
+    @property
     def members(self):
         """Return a list with all the VO members in it."""
         return self.vo.members
