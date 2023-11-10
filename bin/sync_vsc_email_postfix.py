@@ -59,7 +59,7 @@ class VscPostfixSync(Sync):
 
         address_map.update(active_emails)
 
-        txt = "\n".join(["%s %s" % kv for kv in address_map.items()] + [''])
+        txt = "\n".join([f"%s %s" % kv for kv in address_map.items()] + [''])
 
         if dry_run:
             logging.info("Dry run. File contents:\n%s", txt)

@@ -288,7 +288,7 @@ def update_license_reservations(licenses, cluster, partition, ignore_reservation
     known = set(list(ress.keys()))
     config = set(list(rlicenses.keys()))
 
-    skip = {x for x in rlicenses.keys() if rlicenses[x].get('skip', False)}
+    skip = {x for x in rlicenses if rlicenses[x].get('skip', False)}
     if skip:
         logging.warning("License reservations to skip: %s", skip)
         known = known - skip
