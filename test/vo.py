@@ -403,7 +403,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "virtual_organisation": "bvo00005",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00005",
                     "hard": 104857600,
                 },
@@ -426,7 +426,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "vsc100",
                     "hard": 26214400,
                 },
@@ -450,7 +450,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00005",
                     "hard": 52428800,
                 },
@@ -578,7 +578,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "virtual_organisation": "bvo00001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00001",
                     "hard": 104857600,
                 },
@@ -607,7 +607,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10002",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00001",
                     "hard": 52428800,
                 },
@@ -625,7 +625,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10002",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "vsc100",
                     "hard": 104857600,
                 },
@@ -732,7 +732,7 @@ class VoDeploymentTest(TestCase):
             [
                 {
                     "virtual_organisation": "bvo00003",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00003",
                     "hard": 104857600,
                 }
@@ -797,7 +797,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc40001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00003",
                     "hard": 52428800,
                 },
