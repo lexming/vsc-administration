@@ -107,7 +107,7 @@ class VscTier2AccountpageVo(VscAccountPageVo):
         if not self._institute_quota_cache:
             all_quota = [mkVscVoSizeQuota(q) for q in
                          whenHTTPErrorRaise(self.rest_client.vo[self.vo.vsc_id].quota.get,
-                                            f"Could not get quotata from accountpage for VO {self.vo.vsc_id}")[1]]
+                                            f"Could not get quota from accountpage for VO {self.vo.vsc_id}")[1]]
             self._institute_quota_cache = [q for q in all_quota if q.storage['institute'] == self.host_institute]
         return self._institute_quota_cache
 
