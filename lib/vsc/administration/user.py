@@ -30,7 +30,7 @@ from vsc.accountpage.wrappers import mkVscAccount, mkUserGroup
 from vsc.accountpage.wrappers import mkGroup, mkVscUserSizeQuota
 from vsc.config.base import (
     VSC, VscStorage, VSC_DATA, VSC_HOME, VSC_PRODUCTION_SCRATCH, BRUSSEL,
-    GENT, VO_PREFIX_BY_INSTITUTE, VSC_SCRATCH_KYUKON, VSC_SCRATCH_THEIA,
+    GENT, VO_PREFIX_BY_INSTITUTE, VSC_SCRATCH_KYUKON, VSC_SCRATCH_RHEA,
     NEW, MODIFIED, MODIFY, ACTIVE, HOME_KEY, DATA_KEY, SCRATCH_KEY,
     STORAGE_SHARED_SUFFIX,
 )
@@ -138,7 +138,7 @@ class VscTier2AccountpageUser(VscAccountPageUser):
         # Move to vsc-config?
         default_pickle_storage = {
             GENT: VSC_SCRATCH_KYUKON,
-            BRUSSEL: VSC_SCRATCH_THEIA,
+            BRUSSEL: VSC_SCRATCH_RHEA,
         }
 
         self.host_institute = host_institute
