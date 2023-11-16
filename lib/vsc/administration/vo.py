@@ -166,7 +166,6 @@ class VscTier2AccountpageVo(VscAccountPageVo):
     def data_sharing(self):
         return self.vo_data_shared_quota is not None
 
-    @property
     def members(self):
         """Return a list with all the VO members in it."""
         return self.vo.members
@@ -565,6 +564,6 @@ def process_vos(options, vo_ids, storage_name, client, datestamp, host_institute
                     error_vos[vo.vo_id] = [member.account.vsc_id]
         except Exception:
             logging.exception("Something went wrong setting up the VO %s on the storage %s", vo.vo_id, storage_name)
-            error_vos[vo.vo_id] = vo.members
+            error_vos[vo.vo_id] = vo.members()
 
     return (ok_vos, error_vos)
