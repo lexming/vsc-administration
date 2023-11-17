@@ -102,12 +102,12 @@ class SlurmSyncTestGent(TestCase):
 
     def test_slurm_project_qos(self):
 
-        PR = namedtuple("PR", ["name", "cpu_hours", "gpu_hours"])
+        PR = namedtuple("PR", ["name", "credits", "gpu_hours"])
 
         projects = [
-            PR(name="gpr_compute_project1", cpu_hours=2, gpu_hours=3),
-            PR(name="gpr_compute_project2", cpu_hours=5, gpu_hours=0),
-            PR(name="gpr_compute_project3", cpu_hours=4, gpu_hours=0),
+            PR(name="gpr_compute_project1", credits=2, gpu_hours=3),
+            PR(name="gpr_compute_project2", credits=5, gpu_hours=0),
+            PR(name="gpr_compute_project3", credits=4, gpu_hours=0),
         ]
         SQI = namedtuple("SQI", ["Name"])
 
