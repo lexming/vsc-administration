@@ -148,7 +148,8 @@ test_usergroup_1 = {
     "moderators": [
         "vsc40075"
     ],
-    "description": "Nope"
+    "description": "Nope",
+    "isactive": True
 }
 
 test_admin_group_1 = {
@@ -160,7 +161,8 @@ test_admin_group_1 = {
     },
     "members": [],
     "moderators": [],
-    "description": ""
+    "description": "",
+    "isactive": True
 }
 
 test_pubkeys_1 = [
@@ -323,7 +325,7 @@ test_quota_2 = [
         u'hard': 104857600,
         u'storage': {
             u'institute': u'brussel',
-            u'name': u'VSC_SCRATCH_THEIA',
+            u'name': u'VSC_SCRATCH_RHEA',
             u'storage_type': u'scratch'
         },
         u'user': u'vsc10001'
@@ -337,7 +339,7 @@ test_quota_3 = [
         u'hard': 104857600,
         u'storage': {
             u'institute': u'brussel',
-            u'name': u'VSC_SCRATCH_THEIA',
+            u'name': u'VSC_SCRATCH_RHEA',
             u'storage_type': u'scratch'
         },
         u'user': u'vsc10001'
