@@ -102,12 +102,12 @@ class SlurmSyncTestGent(TestCase):
 
     def test_slurm_project_qos(self):
 
-        PR = namedtuple("PR", ["name", "cpu_hours", "gpu_hours"])
+        PR = namedtuple("PR", ["name", "credits", "gpu_hours"])
 
         projects = [
-            PR(name="gpr_compute_project1", cpu_hours=2, gpu_hours=3),
-            PR(name="gpr_compute_project2", cpu_hours=5, gpu_hours=0),
-            PR(name="gpr_compute_project3", cpu_hours=4, gpu_hours=0),
+            PR(name="gpr_compute_project1", credits=10, gpu_hours=3),
+            PR(name="gpr_compute_project2", credits=5, gpu_hours=0),
+            PR(name="gpr_compute_project3", credits=4, gpu_hours=0),
         ]
         SQI = namedtuple("SQI", ["Name"])
 
@@ -123,7 +123,7 @@ class SlurmSyncTestGent(TestCase):
         self.assertEqual(set([tuple(x) for x in commands]), set([tuple(x) for x in [
             shlex.split("/usr/bin/sacctmgr -i add qos Name=mycluster-gpr_compute_project1"),
             shlex.split("/usr/bin/sacctmgr -i add qos Name=mycluster-gpr_compute_project2"),
-            shlex.split("/usr/bin/sacctmgr -i modify qos mycluster-gpr_compute_project1 set flags=NoDecay,DenyOnLimit GRPTRESMins=billing=2280,gres/gpu=180"),
+            shlex.split("/usr/bin/sacctmgr -i modify qos mycluster-gpr_compute_project1 set flags=NoDecay,DenyOnLimit GRPTRESMins=billing=600,gres/gpu=180"),
             shlex.split("/usr/bin/sacctmgr -i modify qos mycluster-gpr_compute_project2 set flags=NoDecay,DenyOnLimit GRPTRESMins=billing=300,gres/gpu=1"),
             shlex.split("/usr/bin/sacctmgr -i modify qos mycluster-gpr_compute_project3 set flags=NoDecay,DenyOnLimit GRPTRESMins=billing=240,gres/gpu=1"),
             shlex.split("/usr/bin/sacctmgr -i remove qos where Name=mycluster-gpr_compute_project4"),
