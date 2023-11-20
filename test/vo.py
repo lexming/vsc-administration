@@ -276,7 +276,10 @@ class VoDeploymentTest(TestCase):
                                             vsc_id_number=123456,
                                             institute='Gent',
                                             members=['vsc40075'],
-                                            description="test autogroup"
+                                            description="test autogroup",
+                                            isactive=True,
+                                            moderators=['vsc40075'],
+                                            sources=[],
                                         )
                                         ok, errors = vo.process_vos(options, [test_vo_id], storage_name, mc, "99991231")
                                         self.assertEqual(errors, {})
@@ -322,7 +325,10 @@ class VoDeploymentTest(TestCase):
                         vsc_id_number=123456,
                         institute='Gent',
                         members=['vsc40075'],
-                        description="test autogroup"
+                        description="test autogroup",
+                        moderators=['vsc40075'],
+                        isactive=True,
+                        sources=[],
                     )
 
                     test_vo.create_data_shared_fileset()
@@ -366,6 +372,7 @@ class VoDeploymentTest(TestCase):
                 "realeppn": "wapoelma@vub.ac.be",
             },
             "home_on_scratch": False,
+            "isactive": True,
         }
         mc.account[account_1["vsc_id"]].get.return_value = (200, account_1)
         mc.vo[test_vo_id].member.modified[date].get.return_value = (200, [account_1])
@@ -382,6 +389,7 @@ class VoDeploymentTest(TestCase):
                 "description": "hpcvub",
                 "members": ["vsc10001", "vsc10003"],
                 "moderators": ["vsc10001"],
+                "isactive": True,
             },
         )
         mc.vo[test_vo_id].quota.get.return_value = (
@@ -395,7 +403,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "virtual_organisation": "bvo00005",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00005",
                     "hard": 104857600,
                 },
@@ -418,7 +426,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "vsc100",
                     "hard": 26214400,
                 },
@@ -442,7 +450,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00005",
                     "hard": 52428800,
                 },
@@ -464,18 +472,18 @@ class VoDeploymentTest(TestCase):
         self.assertEqual(ok, {"bvo00005": ["vsc10001"]})
         self.assertEqual(mock_posix.mock_calls, [mock.call()])
         mock_gpfs.return_value.list_filesets.assert_called()
-        mock_gpfs.return_value.get_fileset_info.assert_called_with("theiadata", "bvo00005")
-        mock_gpfs.return_value.chmod.assert_called_with(504, "/theia/data/brussel/vo/000/bvo00005")
-        mock_gpfs.return_value.chown.assert_called_with(2510001, 2610010, "/theia/data/brussel/vo/000/bvo00005")
+        mock_gpfs.return_value.get_fileset_info.assert_called_with("rheadata", "bvo00005")
+        mock_gpfs.return_value.chmod.assert_called_with(504, "/rhea/data/brussel/vo/000/bvo00005")
+        mock_gpfs.return_value.chown.assert_called_with(2510001, 2610010, "/rhea/data/brussel/vo/000/bvo00005")
         mock_gpfs.return_value.set_fileset_quota.assert_called_with(
-            204010946560, "/theia/data/brussel/vo/000/bvo00005", "bvo00005", 214748364800
+            204010946560, "/rhea/data/brussel/vo/000/bvo00005", "bvo00005", 214748364800
         )
-        mock_gpfs.return_value.set_fileset_grace.assert_called_with("/theia/data/brussel/vo/000/bvo00005", 604800)
+        mock_gpfs.return_value.set_fileset_grace.assert_called_with("/rhea/data/brussel/vo/000/bvo00005", 604800)
         mock_gpfs.return_value.set_user_quota.assert_called_with(
-            hard=107374182400, obj="/theia/data/brussel/vo/000/bvo00005", soft=102005473280, user=2510001
+            hard=107374182400, obj="/rhea/data/brussel/vo/000/bvo00005", soft=102005473280, user=2510001
         )
         mock_gpfs.return_value.create_stat_directory.assert_called_with(
-            "/theia/data/brussel/vo/000/bvo00005/vsc10001", 448, 2510001, 1, override_permissions=False
+            "/rhea/data/brussel/vo/000/bvo00005/vsc10001", 448, 2510001, 1, override_permissions=False
         )
 
         # VSC_SCRATCH test
@@ -488,18 +496,18 @@ class VoDeploymentTest(TestCase):
         self.assertEqual(ok, {"bvo00005": ["vsc10001"]})
         self.assertEqual(mock_posix.mock_calls, [mock.call()])
         mock_gpfs.return_value.list_filesets.assert_called_with()
-        mock_gpfs.return_value.get_fileset_info.assert_called_with("theiascratch", "bvo00005")
-        mock_gpfs.return_value.chmod.assert_called_with(504, "/theia/scratch/brussel/vo/000/bvo00005")
-        mock_gpfs.return_value.chown.assert_called_with(2510001, 2610010, "/theia/scratch/brussel/vo/000/bvo00005")
+        mock_gpfs.return_value.get_fileset_info.assert_called_with("rheascratch", "bvo00005")
+        mock_gpfs.return_value.chmod.assert_called_with(504, "/rhea/scratch/brussel/vo/000/bvo00005")
+        mock_gpfs.return_value.chown.assert_called_with(2510001, 2610010, "/rhea/scratch/brussel/vo/000/bvo00005")
         mock_gpfs.return_value.set_fileset_quota.assert_called_with(
-            102005473280, "/theia/scratch/brussel/vo/000/bvo00005", "bvo00005", 107374182400
+            102005473280, "/rhea/scratch/brussel/vo/000/bvo00005", "bvo00005", 107374182400
         )
-        mock_gpfs.return_value.set_fileset_grace.assert_called_with("/theia/scratch/brussel/vo/000/bvo00005", 604800)
+        mock_gpfs.return_value.set_fileset_grace.assert_called_with("/rhea/scratch/brussel/vo/000/bvo00005", 604800)
         mock_gpfs.return_value.set_user_quota.assert_called_with(
-            hard=53687091200, obj="/theia/scratch/brussel/vo/000/bvo00005", soft=51002736640, user=2510001
+            hard=53687091200, obj="/rhea/scratch/brussel/vo/000/bvo00005", soft=51002736640, user=2510001
         )
         mock_gpfs.return_value.create_stat_directory.assert_called_with(
-            "/theia/scratch/brussel/vo/000/bvo00005/vsc10001", 448, 2510001, 1, override_permissions=False
+            "/rhea/scratch/brussel/vo/000/bvo00005/vsc10001", 448, 2510001, 1, override_permissions=False
         )
 
     @patch("vsc.accountpage.client.AccountpageClient", autospec=True)
@@ -570,7 +578,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "virtual_organisation": "bvo00001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00001",
                     "hard": 104857600,
                 },
@@ -599,7 +607,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10002",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00001",
                     "hard": 52428800,
                 },
@@ -617,7 +625,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc10002",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "vsc100",
                     "hard": 104857600,
                 },
@@ -716,6 +724,7 @@ class VoDeploymentTest(TestCase):
                     "vsc41420",
                 ],
                 "moderators": [],
+                "isactive": True,
             },
         )
         mc.vo[test_vo_id].quota.get.return_value = (
@@ -723,7 +732,7 @@ class VoDeploymentTest(TestCase):
             [
                 {
                     "virtual_organisation": "bvo00003",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00003",
                     "hard": 104857600,
                 }
@@ -788,7 +797,7 @@ class VoDeploymentTest(TestCase):
                 },
                 {
                     "user": "vsc40001",
-                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_THEIA", "storage_type": "scratch"},
+                    "storage": {"institute": "brussel", "name": "VSC_SCRATCH_RHEA", "storage_type": "scratch"},
                     "fileset": "bvo00003",
                     "hard": 52428800,
                 },
@@ -822,14 +831,14 @@ class VoDeploymentTest(TestCase):
         self.assertEqual(mock_posix.mock_calls, [mock.call()])
 
         mock_gpfs.return_value.list_filesets.assert_called_with()
-        mock_gpfs.return_value.get_fileset_info.assert_called_with("theiascratch", "bvo00003")
-        mock_gpfs.return_value.chmod.assert_called_with(504, "/theia/scratch/brussel/vo/000/bvo00003")
+        mock_gpfs.return_value.get_fileset_info.assert_called_with("rheascratch", "bvo00003")
+        mock_gpfs.return_value.chmod.assert_called_with(504, "/rhea/scratch/brussel/vo/000/bvo00003")
         nobody_id = pwd.getpwnam('nobody').pw_uid
-        mock_gpfs.return_value.chown.assert_called_with(nobody_id, 2610008, "/theia/scratch/brussel/vo/000/bvo00003")
+        mock_gpfs.return_value.chown.assert_called_with(nobody_id, 2610008, "/rhea/scratch/brussel/vo/000/bvo00003")
         mock_gpfs.return_value.set_fileset_quota.assert_called_with(
-            102005473280, "/theia/scratch/brussel/vo/000/bvo00003", "bvo00003", 107374182400
+            102005473280, "/rhea/scratch/brussel/vo/000/bvo00003", "bvo00003", 107374182400
         )
-        mock_gpfs.return_value.set_fileset_grace.assert_called_with("/theia/scratch/brussel/vo/000/bvo00003", 604800)
+        mock_gpfs.return_value.set_fileset_grace.assert_called_with("/rhea/scratch/brussel/vo/000/bvo00003", 604800)
         mock_gpfs.return_value.create_stat_directory.assert_called_with(
-            "/theia/scratch/brussel/vo/000/bvo00003/vsc40002", 448, 2540002, 1, override_permissions=False
+            "/rhea/scratch/brussel/vo/000/bvo00003/vsc40002", 448, 2540002, 1, override_permissions=False
         )

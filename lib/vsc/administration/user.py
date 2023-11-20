@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 #
 # Copyright 2012-2023 Ghent University
 #
@@ -31,7 +30,7 @@ from vsc.accountpage.wrappers import mkVscAccount, mkUserGroup
 from vsc.accountpage.wrappers import mkGroup, mkVscUserSizeQuota
 from vsc.config.base import (
     VSC, VscStorage, VSC_DATA, VSC_HOME, VSC_PRODUCTION_SCRATCH, BRUSSEL,
-    GENT, VO_PREFIX_BY_INSTITUTE, VSC_SCRATCH_KYUKON, VSC_SCRATCH_THEIA,
+    GENT, VO_PREFIX_BY_INSTITUTE, VSC_SCRATCH_KYUKON, VSC_SCRATCH_RHEA,
     NEW, MODIFIED, MODIFY, ACTIVE, HOME_KEY, DATA_KEY, SCRATCH_KEY,
     STORAGE_SHARED_SUFFIX,
 )
@@ -50,7 +49,7 @@ class UserStatusUpdateError(Exception):
     pass
 
 
-class VscAccountPageUser(object):
+class VscAccountPageUser:
     """
     A user who gets his own information from the accountpage through the REST API.
     """
@@ -97,7 +96,7 @@ class VscAccountPageUser(object):
                 # TODO to be removed when magic site admin usergroups are purged from code
                 self._cache['usergroup'] = mkGroup((self.rest_client.group[self.user_id].get())[1])
             else:
-                self._cache['usergroup'] = mkUserGroup((self.rest_client.account[self.user_id].usergroup.get()[1]))
+                self._cache['usergroup'] = mkUserGroup(self.rest_client.account[self.user_id].usergroup.get()[1])
 
         return self._cache['usergroup']
 
@@ -133,13 +132,13 @@ class VscTier2AccountpageUser(VscAccountPageUser):
         Initialisation.
         @type vsc_user_id: string representing the user's VSC ID (vsc[0-9]{5})
         """
-        super(VscTier2AccountpageUser, self).__init__(user_id, rest_client, account=account,
+        super().__init__(user_id, rest_client, account=account,
                                                       pubkeys=pubkeys, use_user_cache=use_user_cache)
 
         # Move to vsc-config?
         default_pickle_storage = {
             GENT: VSC_SCRATCH_KYUKON,
-            BRUSSEL: VSC_SCRATCH_THEIA,
+            BRUSSEL: VSC_SCRATCH_RHEA,
         }
 
         self.host_institute = host_institute
@@ -159,7 +158,7 @@ class VscTier2AccountpageUser(VscAccountPageUser):
         self.posix = PosixOperations()
 
     def _init_cache(self, **kwargs):
-        super(VscTier2AccountpageUser, self)._init_cache(**kwargs)
+        super()._init_cache(**kwargs)
         self._cache['quota'] = {}
 
     @property
@@ -261,7 +260,7 @@ class VscTier2AccountpageUser(VscAccountPageUser):
             mount_path = self.institute_storage[storage_name].gpfs_mount_point
         else:
             logging.error("mount_point (%s) is not login or gpfs", mount_point)
-            raise Exception("mount_point (%s) is not designated as gpfs or login" % (mount_point,))
+            raise Exception(f"mount_point ({mount_point}) is not designated as gpfs or login")
 
         return mount_path
 
@@ -408,7 +407,7 @@ class VscTier2AccountpageUser(VscAccountPageUser):
             self.gpfs.dry_run = value
             self.posix.dry_run = value
 
-        super(VscTier2AccountpageUser, self).__setattr__(name, value)
+        super().__setattr__(name, value)
 
 
 cluster_user_pickle_location_map = {
@@ -445,8 +444,7 @@ def update_user_status(user, client):
             logging.info("Account %s status changed to %s", user.user_id, ACTIVE)
         else:
             logging.error("Account %s status was not changed", user.user_id)
-            raise UserStatusUpdateError("Account %s status was not changed, still at %s" %
-                                        (user.user_id, account.status))
+            raise UserStatusUpdateError(f"Account {user.user_id} status was not changed, still at {account.status}")
 
 
 def process_users_quota(options, user_quota, storage_name, client, host_institute=GENT, use_user_cache=True):
