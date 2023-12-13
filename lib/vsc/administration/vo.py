@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 #
 # Copyright 2012-2023 Ghent University
 #
@@ -28,7 +27,7 @@ import logging
 import os
 import pwd
 
-from vsc.utils.py2vs3 import HTTPError
+from urllib.request import HTTPError
 
 from vsc.accountpage.wrappers import mkVo, mkVscVoSizeQuota, mkVscAccount, mkVscAutogroup
 from vsc.administration.user import VscTier2AccountpageUser, UserStatusUpdateError
@@ -54,7 +53,7 @@ def whenHTTPErrorRaise(f, msg, **kwargs):
         raise
 
 
-class VscAccountPageVo(object):
+class VscAccountPageVo:
     """
     A Vo that gets its own information from the accountpage through the REST API.
     """
@@ -70,7 +69,7 @@ class VscAccountPageVo(object):
     def vo(self):
         if not self._vo_cache:
             self._vo_cache = mkVo(whenHTTPErrorRaise(self.rest_client.vo[self.vo_id].get,
-                                                     "Could not get VO from accountpage for VO %s" % self.vo_id)[1])
+                                                     f"Could not get VO from accountpage for VO {self.vo_id}")[1])
         return self._vo_cache
 
 
@@ -101,7 +100,7 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
         if not self._institute_quota_cache:
             all_quota = [mkVscVoSizeQuota(q) for q in
                          whenHTTPErrorRaise(self.rest_client.vo[self.vo.vsc_id].quota.get,
-                                            "Could not get quota from accountpage for VO %s" % self.vo.vsc_id)[1]]
+                                            f"Could not get quota from accountpage for VO {self.vo.vsc_id}")[1]]
             self._institute_quota_cache = [q for q in all_quota if q.storage['institute'] == self.host_institute]
         return self._institute_quota_cache
 
@@ -152,7 +151,7 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
                                                 VO_SHARED_PREFIX_BY_INSTITUTE[self.vo.institute['name']])
             self._sharing_group_cache = mkVscAutogroup(
                 whenHTTPErrorRaise(self.rest_client.autogroup[group_name].get,
-                                   "Could not get autogroup %s details" % group_name)[1])
+                                   f"Could not get autogroup {group_name} details")[1])
 
         return self._sharing_group_cache
 
@@ -413,7 +412,7 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
             for filesystem in self.storage[self.host_institute]:
                 self.storage[self.host_institute][filesystem].operator().dry_run = value
 
-        super(VscTier2AccountpageVo, self).__setattr__(name, value)
+        super().__setattr__(name, value)
 
 
 def update_vo_status(vo):
@@ -446,8 +445,7 @@ def update_vo_status(vo):
             logging.info("VO %s status changed to %s", vo.vo_id, ACTIVE)
         else:
             logging.error("VO %s status was not changed", vo.vo_id)
-            raise UserStatusUpdateError("VO %s status was not changed, still at %s" %
-                                        (vo.vo_id, virtual_organisation.status))
+            raise UserStatusUpdateError(f"VO {vo.vo_id} status was not changed, still at {virtual_organisation.status}")
 
 
 def process_vos(options, vo_ids, storage_name, client, datestamp, host_institute=GENT):
@@ -517,6 +515,6 @@ def process_vos(options, vo_ids, storage_name, client, datestamp, host_institute
                     error_vos[vo.vo_id] = [member.account.vsc_id]
         except Exception:
             logging.exception("Something went wrong setting up the VO %s on the storage %s", vo.vo_id, storage_name)
-            error_vos[vo.vo_id] = vo.members
+            error_vos[vo.vo_id] = vo.members()
 
     return (ok_vos, error_vos)

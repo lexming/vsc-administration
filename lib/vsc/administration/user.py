@@ -1,4 +1,3 @@
-# -*- coding: latin-1 -*-
 #
 # Copyright 2012-2023 Ghent University
 #
@@ -25,7 +24,7 @@ This file contains the utilities for dealing with users on the VSC.
 import logging
 import os
 
-from vsc.utils.py2vs3 import HTTPError
+from urllib.request import HTTPError
 
 from vsc.accountpage.wrappers import mkVscAccountPubkey, mkVscHomeOnScratch
 from vsc.accountpage.wrappers import mkVscAccount, mkUserGroup
@@ -33,10 +32,12 @@ from vsc.accountpage.wrappers import mkGroup, mkVscUserSizeQuota
 from vsc.administration.base import VscTier2Accountpage, MOUNT_POINT_DEFAULT
 from vsc.administration.tools import quota_limits
 from vsc.config.base import (
-    VSC, VSC_DATA, VSC_HOME, VSC_PRODUCTION_SCRATCH, BRUSSEL, GENT, VO_PREFIX_BY_INSTITUTE, VSC_SCRATCH_KYUKON,
-    VSC_SCRATCH_THEIA, NEW, MODIFIED, MODIFY, ACTIVE, HOME_KEY, DATA_KEY, SCRATCH_KEY, STORAGE_SHARED_SUFFIX,
+    VSC, VSC_DATA, VSC_HOME, VSC_PRODUCTION_SCRATCH, BRUSSEL, GENT,
+    VO_PREFIX_BY_INSTITUTE, VSC_SCRATCH_KYUKON, VSC_SCRATCH_RHEA,
+    NEW, MODIFIED, MODIFY, ACTIVE, HOME_KEY, DATA_KEY, SCRATCH_KEY,
+    STORAGE_SHARED_SUFFIX,
 )
-from vsc.utils.py2vs3 import ensure_ascii_string
+from vsc.utils.missing import ensure_ascii_string
 
 # Cache for user instances
 _users_cache = {
@@ -49,7 +50,7 @@ class UserStatusUpdateError(Exception):
     pass
 
 
-class VscAccountPageUser(object):
+class VscAccountPageUser:
     """
     A user who gets his own information from the accountpage through the REST API.
     """
@@ -96,7 +97,7 @@ class VscAccountPageUser(object):
                 # TODO to be removed when magic site admin usergroups are purged from code
                 self._cache['usergroup'] = mkGroup((self.rest_client.group[self.user_id].get())[1])
             else:
-                self._cache['usergroup'] = mkUserGroup((self.rest_client.account[self.user_id].usergroup.get()[1]))
+                self._cache['usergroup'] = mkUserGroup(self.rest_client.account[self.user_id].usergroup.get()[1])
 
         return self._cache['usergroup']
 
@@ -140,7 +141,7 @@ class VscTier2AccountpageUser(VscAccountPageUser, VscTier2Accountpage):
         # Move to vsc-config?
         default_pickle_storage = {
             GENT: VSC_SCRATCH_KYUKON,
-            BRUSSEL: VSC_SCRATCH_THEIA,
+            BRUSSEL: VSC_SCRATCH_RHEA,
         }
 
         if pickle_storage is None:
@@ -153,7 +154,7 @@ class VscTier2AccountpageUser(VscAccountPageUser, VscTier2Accountpage):
         self.vsc = VSC()
 
     def _init_cache(self, **kwargs):
-        super(VscTier2AccountpageUser, self)._init_cache(**kwargs)
+        super()._init_cache(**kwargs)
         self._cache['quota'] = {}
 
     @property
@@ -363,7 +364,7 @@ class VscTier2AccountpageUser(VscAccountPageUser, VscTier2Accountpage):
             for filesystem in self.institute_storage:
                 self.institute_storage[filesystem].operator().dry_run = value
 
-        super(VscTier2AccountpageUser, self).__setattr__(name, value)
+        super().__setattr__(name, value)
 
 
 cluster_user_pickle_location_map = {
@@ -400,8 +401,7 @@ def update_user_status(user, client):
             logging.info("Account %s status changed to %s", user.user_id, ACTIVE)
         else:
             logging.error("Account %s status was not changed", user.user_id)
-            raise UserStatusUpdateError("Account %s status was not changed, still at %s" %
-                                        (user.user_id, account.status))
+            raise UserStatusUpdateError(f"Account {user.user_id} status was not changed, still at {account.status}")
 
 
 def process_users_quota(options, user_quota, storage_name, client, host_institute=GENT, use_user_cache=True):

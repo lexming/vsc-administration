@@ -18,7 +18,6 @@ This script synchronises the users and VO's from the HPC account page to the Slu
 
 The script must result in an idempotent execution, to ensure nothing breaks.
 """
-from __future__ import print_function
 
 import logging
 import sys
@@ -37,8 +36,8 @@ from vsc.utils.timestamp import convert_timestamp, write_timestamp, retrieve_tim
 NAGIOS_HEADER = "sync_slurm_acct"
 NAGIOS_CHECK_INTERVAL_THRESHOLD = 60 * 60  # 60 minutes
 
-SYNC_TIMESTAMP_FILENAME = "/var/cache/%s.timestamp" % (NAGIOS_HEADER)
-SYNC_SLURM_ACCT_LOGFILE = "/var/log/%s.log" % (NAGIOS_HEADER)
+SYNC_TIMESTAMP_FILENAME = f"/var/cache/{NAGIOS_HEADER}.timestamp"
+SYNC_SLURM_ACCT_LOGFILE = f"/var/log/{NAGIOS_HEADER}.log"
 
 MAX_USERS_JOB_CANCEL = 10
 
@@ -115,18 +114,18 @@ def main():
         account_page_vos = [mkVo(v) for v in client.vo.institute[opts.options.host_institute].get()[1]]
 
         # make sure the institutes and the default accounts (VOs) are there for each cluster
-        institute_vos = dict([
-            (v.vsc_id, v)
+        institute_vos = {
+            v.vsc_id: v
             for v in account_page_vos
             if v.vsc_id in INSTITUTE_VOS_BY_INSTITUTE[host_institute].values()
-        ])
+        }
         sacctmgr_commands += slurm_institute_accounts(slurm_account_info, clusters, host_institute, institute_vos)
 
         # The VOs do not track active state of users, so we need to fetch all accounts as well
-        active_accounts = set([a["vsc_id"] for a in client.account.get()[1] if a["isactive"]])
+        active_accounts = {a["vsc_id"] for a in client.account.get()[1] if a["isactive"]}
 
         # dictionary mapping the VO vsc_id on a tuple with the VO members and the VO itself
-        account_page_members = dict([(vo.vsc_id, (set(vo.members), vo)) for vo in account_page_vos])
+        account_page_members = {vo.vsc_id: (set(vo.members), vo) for vo in account_page_vos}
 
         # process all regular VOs
         sacctmgr_commands += slurm_vo_accounts(account_page_vos, slurm_account_info, clusters, host_institute)
@@ -150,8 +149,6 @@ def main():
             logging.info("Executing %d commands", len(sacctmgr_commands))
             execute_commands(sacctmgr_commands)
 
-        # reset to go on with the remainder of the commands
-        sacctmgr_commands = []
 
         # safety to avoid emptying the cluster due to some error upstream
         if not opts.options.force and len(job_cancel_commands) > MAX_USERS_JOB_CANCEL:
@@ -159,9 +156,12 @@ def main():
             logging.debug("Would execute the following cancel commands:")
             for jc in job_cancel_commands.values():
                 logging.debug("%s", jc)
-            raise SyncSanityError("Would cancel jobs for %d users" % len(job_cancel_commands))
+            raise SyncSanityError(f"Would cancel jobs for {len(job_cancel_commands)} users")
 
-        sacctmgr_commands += [c for cl in job_cancel_commands.values() for c in cl]
+        scancel_commands = [c for cl in job_cancel_commands.values() for c in cl]
+
+        # reset to go on with the remainder of the commands
+        sacctmgr_commands = []
 
         # removing users may fail, so should be done last
         sacctmgr_commands += association_remove_commands
@@ -171,6 +171,7 @@ def main():
             print("\n".join([" ".join(c) for c in sacctmgr_commands]))
         else:
             logging.info("Executing %d commands", len(sacctmgr_commands))
+            execute_commands(scancel_commands, allow_failure=True)
             execute_commands(sacctmgr_commands)
 
         if not opts.options.dry_run:

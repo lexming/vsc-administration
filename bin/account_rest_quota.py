@@ -17,7 +17,6 @@
 This script will adjust the quota for the given entity, be it a user or a VO
 on the given storage.
 """
-from __future__ import print_function
 
 import sys
 
@@ -67,19 +66,19 @@ def main():
     current = original.get()
     if current[0] in (200,):
         if opts.options.original:
-            print("Original values: %s" % (current[1],))
+            print(f"Original values: {current[1]}")
     else:
         print("Error, could not get original quota values for the given parameters")
-        print("Issue: %s" % (current[1],))
+        print(f"Issue: {current[1]}")
         sys.exit(-1)
 
     result = upload.put(body={"hard": size})
     if result[0] in (200,):
         print("Request OK.")
-        print("New values: %s" % (result[1],))
+        print(f"New values: {result[1]}")
     else:
         print("Request failed")
-        print("Issue: %s" % (result[1],))
+        print(f"Issue: {result[1]}")
 
 if __name__ == '__main__':
     main()

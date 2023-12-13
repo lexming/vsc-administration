@@ -37,8 +37,6 @@ A mechanism that I have heard of being used is to:
 #   However that is not driven by config file, and is not pseudonymous
 # Current main difference: this code is to be run as cron; the other code is a daemon with possibly higher frequency
 
-from __future__ import print_function
-
 import json
 import logging
 import os
@@ -68,11 +66,11 @@ from vsc.config.base import VSC_SLURM_CLUSTERS, PRODUCTION, PILOT, GENT
 NAGIOS_HEADER = "sync_slurm_external_licenses"
 NAGIOS_CHECK_INTERVAL_THRESHOLD = 60 * 60  # 60 minutes
 
-SYNC_SLURM_ACCT_LOGFILE = "/var/log/%s.log" % (NAGIOS_HEADER)
+SYNC_SLURM_ACCT_LOGFILE = f"/var/log/{NAGIOS_HEADER}.log"
 
 FLEXLM = 'flexlm'
 
-LMUTIL_LMSTAT_REGEXP = re.compile("""
+LMUTIL_LMSTAT_REGEXP = re.compile(r"""
     Users\s+of\s+(?P<name>\w+):
     \s+\(
         Total\s+of\s+(?P<total>\d+)\s+licenses?\s+issued;\s+
@@ -106,7 +104,7 @@ def retrieve_license_data(license_type, tool, server, port):
         (fd, fn) = tempfile.mkstemp(suffix='.flexlm_fake_lic')
         try:
             with os.fdopen(fd, 'w') as fh:
-                fh.write('SERVER %s AABBCCDDEEFF %s\n' % (server, port))
+                fh.write(f'SERVER {server} AABBCCDDEEFF {port}\n')
             # lmutil lmstat -a -c tmpfile
             (ec, output) = RunNoShell.run([tool, 'lmstat', '-a', '-c', fn])
             if ec != 0:
@@ -183,7 +181,7 @@ def licenses_data(config_filename, default_tool):
             sdata['type'] = edata['license_type']
             if 'name' not in sdata:
                 sdata['name'] = soft
-            res["%s@%s" % (sdata['name'], extern)] = sdata
+            res[f"{sdata['name']}@{extern}"] = sdata
 
     return res
 
@@ -203,12 +201,12 @@ def update_licenses(licenses, clusters, ignore_resources, force_update):
     info = [resc for resc in info if resc and resc.Type == 'License' and resc.Name not in ignore_resources]
     logging.debug("%d license resources found: %s", len(info), info)
 
-    info = dict([("%s@%s" % (resc.Name, resc.Server), resc) for resc in info])
+    info = {f"{resc.Name}@{resc.Server}": resc for resc in info}
 
     known = set(list(info.keys()))
     config = set(list(licenses.keys()))
 
-    skip = set([x for x in licenses.keys() if licenses[x].get('skip', False)])
+    skip = {x for x in licenses.keys() if licenses[x].get('skip', False)}
     if skip:
         logging.warning("License resources to skip: %s", skip)
         known = known - skip
@@ -273,24 +271,24 @@ def update_license_reservations(licenses, cluster, partition, ignore_reservation
     # Get the licenses
     #    This cluster should see all licenses, incl their usage
     # Convert to dict with reservation names
-    lics = dict([(make_license_reservation_name(k), v) for k, v in get_scontrol_info(ScontrolTypes.license).items()])
+    lics = {make_license_reservation_name(k): v for k, v in get_scontrol_info(ScontrolTypes.license).items()}
     logging.debug("Existing licenses %s", lics)
 
     # Get all existing license reservations
     #    only license reservations
     #       remove the ignore_reservations also
     # The LICENSE_ONLY flag does not show up in flags
-    ress = dict([(k, v) for k, v in get_scontrol_info(ScontrolTypes.reservation).items()
+    ress = {k: v for k, v in get_scontrol_info(ScontrolTypes.reservation).items()
                  if v.Licenses is not None
                  and v.ReservationName.startswith(LICENSE_RESERVATION_PREFIX)
                  and k not in ignore_reservations
-                 ])
+                 }
     logging.debug("Existing license reservations %s", ress)
 
     known = set(list(ress.keys()))
     config = set(list(rlicenses.keys()))
 
-    skip = set([x for x in rlicenses.keys() if rlicenses[x].get('skip', False)])
+    skip = {x for x in rlicenses if rlicenses[x].get('skip', False)}
     if skip:
         logging.warning("License reservations to skip: %s", skip)
         known = known - skip
@@ -349,7 +347,7 @@ def main():
     """
 
     options = {
-        "licenses": ('JSON file with required license information', None, 'store', "/etc/%s.json" % NAGIOS_HEADER),
+        "licenses": ('JSON file with required license information', None, 'store', f"/etc/{NAGIOS_HEADER}.json"),
         "force_update": ('No compare logic, update all found license resources and/or reservations',
                          None, 'store_true', False),
         "tool": ('Default license tool path', None, 'store', None),

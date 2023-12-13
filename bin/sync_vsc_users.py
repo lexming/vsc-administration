@@ -44,8 +44,8 @@ from vsc.utils.timestamp import convert_timestamp, write_timestamp, retrieve_tim
 NAGIOS_HEADER = "sync_vsc_users"
 NAGIOS_CHECK_INTERVAL_THRESHOLD = 15 * 60  # 15 minutes
 
-SYNC_TIMESTAMP_FILENAME = "/var/cache/%s.timestamp" % (NAGIOS_HEADER)
-SYNC_VSC_USERS_LOGFILE = "/var/log/%s.log" % (NAGIOS_HEADER)
+SYNC_TIMESTAMP_FILENAME = f"/var/cache/{NAGIOS_HEADER}.timestamp"
+SYNC_VSC_USERS_LOGFILE = f"/var/log/{NAGIOS_HEADER}.log"
 
 STORAGE_USERS_LIMIT_WARNING = 1
 STORAGE_USERS_LIMIT_CRITICAL = 10
@@ -111,10 +111,10 @@ def main():
                     storage_name,
                     client,
                     institute)
-                stats["%s_users_sync" % (storage_name,)] = len(users_ok)
-                stats["%s_users_sync_fail" % (storage_name,)] = len(users_fail)
-                stats["%s_users_sync_fail_warning" % (storage_name,)] = STORAGE_USERS_LIMIT_WARNING
-                stats["%s_users_sync_fail_critical" % (storage_name,)] = STORAGE_USERS_LIMIT_CRITICAL
+                stats[f"{storage_name}_users_sync"] = len(users_ok)
+                stats[f"{storage_name}_users_sync_fail"] = len(users_fail)
+                stats[f"{storage_name}_users_sync_fail_warning"] = STORAGE_USERS_LIMIT_WARNING
+                stats[f"{storage_name}_users_sync_fail_critical"] = STORAGE_USERS_LIMIT_CRITICAL
 
             for storage_name in opts.options.storage:
                 storage_changed_quota = [mkVscUserSizeQuota(q) for q in
@@ -128,10 +128,10 @@ def main():
                     storage_name,
                     client,
                     institute)
-                stats["%s_quota_sync" % (storage_name,)] = len(quota_ok)
-                stats["%s_quota_sync_fail" % (storage_name,)] = len(quota_fail)
-                stats["%s_quota_sync_fail_warning" % (storage_name,)] = STORAGE_QUOTA_LIMIT_WARNING
-                stats["%s_quota_sync_fail_critical" % (storage_name,)] = STORAGE_QUOTA_LIMIT_CRITICAL
+                stats[f"{storage_name}_quota_sync"] = len(quota_ok)
+                stats[f"{storage_name}_quota_sync_fail"] = len(quota_fail)
+                stats[f"{storage_name}_quota_sync_fail_warning"] = STORAGE_QUOTA_LIMIT_WARNING
+                stats[f"{storage_name}_quota_sync_fail_critical"] = STORAGE_QUOTA_LIMIT_CRITICAL
 
         (vos_ok, vos_fail) = ([], [])
         if opts.options.vo:
@@ -145,7 +145,7 @@ def main():
                         len(changed_vos), institute, last_timestamp)
             logging.info("Found %d %s VOs that have changed quota in the accountpage since %s",
                         len(changed_vo_quota), institute, last_timestamp)
-            logging.debug("Found the following {institute} VOs: {vos}".format(institute=institute, vos=vos))
+            logging.debug(f"Found the following {institute} VOs: {vos}")
 
             for storage_name in opts.options.storage:
                 (vos_ok, vos_fail) = process_vos(
@@ -155,10 +155,10 @@ def main():
                     client,
                     last_timestamp,
                     institute)
-                stats["%s_vos_sync" % (storage_name,)] = len(vos_ok)
-                stats["%s_vos_sync_fail" % (storage_name,)] = len(vos_fail)
-                stats["%s_vos_sync_fail_warning" % (storage_name,)] = STORAGE_VO_LIMIT_WARNING
-                stats["%s_vos_sync_fail_critical" % (storage_name,)] = STORAGE_VO_LIMIT_CRITICAL
+                stats[f"{storage_name}_vos_sync"] = len(vos_ok)
+                stats[f"{storage_name}_vos_sync_fail"] = len(vos_fail)
+                stats[f"{storage_name}_vos_sync_fail_warning"] = STORAGE_VO_LIMIT_WARNING
+                stats[f"{storage_name}_vos_sync_fail_critical"] = STORAGE_VO_LIMIT_CRITICAL
 
         if not (users_fail or quota_fail or vos_fail) and not opts.options.dry_run:
             (_, ldap_timestamp) = convert_timestamp(start_time)
@@ -168,7 +168,7 @@ def main():
         opts.critical("Script failed in a horrible way")
         sys.exit(NAGIOS_EXIT_CRITICAL)
 
-    opts.epilogue("%s users and VOs synchronised" % institute, stats)
+    opts.epilogue(f"{institute} users and VOs synchronised", stats)
 
 
 if __name__ == '__main__':
