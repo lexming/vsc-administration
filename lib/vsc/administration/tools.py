@@ -54,7 +54,7 @@ def quota_limits(quota, soft_fraction, replication_factor=1):
     @type replication_factor: numeric bigger than 1
     """
     if soft_fraction > 1 or soft_fraction < 0:
-        err_msg = "Fraction of soft quota limit is out of [0-1] range: %s" % soft_fraction
+        err_msg = f"Fraction of soft quota limit is out of [0-1] range: {soft_fraction}"
         logging.exception(err_msg)
         raise Exception(err_msg)
 
