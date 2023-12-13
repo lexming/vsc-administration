@@ -30,7 +30,7 @@ from vsc.filesystem.operator import StorageOperator
 MOUNT_POINT_LOGIN = 'login'
 MOUNT_POINT_DEFAULT = 'backend'
 
-class VscTier2Accountpage(object):
+class VscTier2Accountpage():
     """Common methods to handle settings from the account page"""
 
     def __init__(self, storage=None, host_institute=GENT):
@@ -99,7 +99,7 @@ class VscTier2Accountpage(object):
         elif mount_point == MOUNT_POINT_LOGIN:
             mount_path = self.institute_storage[storage_name].login_mount_point
         else:
-            errmsg = "mount point type '%s' is not supported" % mount_point
+            errmsg = f"mount point type '{mount_point}' is not supported"
             logging.error(errmsg)
             raise Exception(errmsg)
 
@@ -107,11 +107,9 @@ class VscTier2Accountpage(object):
 
     def _get_path(self, storage_name, mount_point=MOUNT_POINT_DEFAULT):
         """PLACEHOLDER: Get the path for user or VO directory on the given storage_name."""
-        pass
 
     def _get_grouping_path(self, storage_name, mount_point=MOUNT_POINT_DEFAULT):
         """PLACEHOLDER: Get the path and the fileset for the user group directory."""
-        pass
 
     def _home_path(self, mount_point=MOUNT_POINT_DEFAULT):
         """Return the path to the home dir."""
