@@ -819,7 +819,8 @@ class VoDeploymentTest(TestCase):
             operator().list_filesets.assert_called_with()
             operator().get_fileset_info.assert_called_with("rheascratch", "bvo00003")
             operator().chmod.assert_called_with(504, "/rhea/scratch/brussel/vo/000/bvo00003")
-            operator().chown.assert_called_with(99, 2610008, "/rhea/scratch/brussel/vo/000/bvo00003")
+            nobody_id = pwd.getpwnam('nobody').pw_uid
+            operator().chown.assert_called_with(nobody_id, 2610008, "/rhea/scratch/brussel/vo/000/bvo00003")
             operator().set_fileset_quota.assert_called_with(
                 102005473280, "/rhea/scratch/brussel/vo/000/bvo00003", "bvo00003", 107374182400
             )
