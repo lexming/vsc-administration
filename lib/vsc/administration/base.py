@@ -70,11 +70,7 @@ class VscTier2Accountpage():
             logging.info("Creating new fileset on %s with name %s and path %s", filesystem_name, fileset_name, path)
             base_dir_hierarchy = os.path.dirname(path)
             storage.operator().make_dir(base_dir_hierarchy)
-            # HACK to support versions older than 3.5 in our setup
-            if parent_fileset is None:
-                storage.operator().make_fileset(path, fileset_name)
-            else:
-                storage.operator().make_fileset(path, fileset_name, parent_fileset)
+            storage.operator().make_fileset(path, fileset_name, parent_fileset_name=parent_fileset)
         else:
             logging.info("Fileset %s already exists ... not creating again.", fileset_name)
 
