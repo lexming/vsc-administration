@@ -437,7 +437,7 @@ def update_user_status(user, client):
         response_account = client.account[user.user_id].patch(body=payload)
     except HTTPError as err:
         logging.error("Account %s and UserGroup %s status were not changed", user.user_id, user.user_id)
-        raise UserStatusUpdateError("Account %s status was not changed - received HTTP code %d" % err.code)
+        raise UserStatusUpdateError(f"Account %s status was not changed - received HTTP code {err.code}")
     else:
         account = mkVscAccount(response_account[1])
         if account.status == ACTIVE:
