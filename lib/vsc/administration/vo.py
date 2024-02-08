@@ -1,5 +1,5 @@
 #
-# Copyright 2012-2023 Ghent University
+# Copyright 2012-2024 Ghent University
 #
 # This file is part of vsc-administration,
 # originally created by the HPC team of Ghent University (http://ugent.be/hpc/en),
@@ -487,7 +487,7 @@ def update_vo_status(vo):
         response = vo.rest_client.vo[vo.vo_id].patch(body=payload)
     except HTTPError as err:
         logging.error("VO %s status was not changed", vo.vo_id)
-        raise VoStatusUpdateError("Vo %s status was not changed - received HTTP code %d" % err.code)
+        raise VoStatusUpdateError(f"Vo %s status was not changed - received HTTP code {err.code}")
     else:
         virtual_organisation = mkVo(response)
         if virtual_organisation.status == ACTIVE:
