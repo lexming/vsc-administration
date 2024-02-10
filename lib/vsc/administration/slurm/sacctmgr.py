@@ -517,7 +517,6 @@ def create_modify_resource_license_command(name, server, stype, count):
         f"ServerType={stype}",
         "set",
         f"Count={count}",
-        "PercentAllowed=100",
     ]
 
     return command

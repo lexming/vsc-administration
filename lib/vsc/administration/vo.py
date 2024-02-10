@@ -438,7 +438,7 @@ def update_vo_status(vo):
         response = vo.rest_client.vo[vo.vo_id].patch(body=payload)
     except HTTPError as err:
         logging.error("VO %s status was not changed", vo.vo_id)
-        raise VoStatusUpdateError(f"Vo {err.code} status was not changed - received HTTP code %d")
+        raise VoStatusUpdateError(f"Vo %s status was not changed - received HTTP code {err.code}")
     else:
         virtual_organisation = mkVo(response)
         if virtual_organisation.status == ACTIVE:
