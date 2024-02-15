@@ -26,13 +26,13 @@ install_requires = [
     'vsc-accountpage-clients >= 2.1.6',
     'vsc-base >= 3.5.0',
     'vsc-config >= 3.13.4',
-    'vsc-filesystems >= 1.0.1',
+    'vsc-filesystems >= 1.3.0',
     'vsc-utils >= 2.0.0',
     'lockfile >= 0.9.1',
 ]
 
 PACKAGE = {
-    'version': '4.6.1',
+    'version': '4.7.0',
     'author': [ag, jt],
     'maintainer': [ag, jt],
     'tests_require': ['mock'],
@@ -40,6 +40,9 @@ PACKAGE = {
         'vsc-install >= 0.15.3',
     ],
     'install_requires': install_requires,
+    'extras_require': {
+        'oceanstor': ['vsc-filesystem-oceanstor >= 0.6.0'],
+    },
 }
 
 
