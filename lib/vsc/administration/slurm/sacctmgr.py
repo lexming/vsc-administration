@@ -71,7 +71,7 @@ SacctQosFields = [
 ]
 
 SacctResourceFields = [
-    "Name", "Server", "Type", "Count", "PCT__Allocated", "ServerType",
+    "Name", "Server", "Type", "Count", "Allocated", "ServerType",
 ]
 
 IGNORE_USERS = ["root"]
