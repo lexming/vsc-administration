@@ -138,7 +138,7 @@ class TestSyncSlurmExtLicenses(TestCase):
     def test_update_licenses(self, masync):
         """Test sacctmgr resource commands: add new, update, skip, dont_update_identical, remove"""
 
-        masync.return_value = (0, """Name|Server|Type|Count|% Allocated|ServerType
+        masync.return_value = (0, """Name|Server|Type|Count|Allocated|ServerType
 comsol|bogus|License|2|0|flexlm
 hubba|myserver|NotALicense|10000|52|psssss
 an-4|ano-comp2|License|200|3|flexlm
