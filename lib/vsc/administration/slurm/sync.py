@@ -50,7 +50,7 @@ def execute_commands(commands, allow_failure=False):
         (ec, output) = RunNoShell.run(command)
         if ec != 0 and not allow_failure:
             # Check if "Nothing added" is in the output, if so, we can ignore the error
-            if output is not None and "Nothing added" in output:
+            if output and "Nothing added" in output:
                 logging.info("Command %s failed, but nothing was added", command)
             else:
                 raise SCommandException(f"Command failed: {command}")
