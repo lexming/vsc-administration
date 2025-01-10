@@ -1,5 +1,5 @@
 #
-# Copyright 2013-2024 Ghent University
+# Copyright 2013-2025 Ghent University
 #
 # This file is part of vsc-administration,
 # originally created by the HPC team of Ghent University (http://ugent.be/hpc/en),
@@ -47,9 +47,13 @@ def execute_commands(commands, allow_failure=False):
         logging.info("Running command: %s", command)
 
         # if one fails, we simply fail the script and should get notified
-        (ec, _) = RunNoShell.run(command)
+        (ec, output) = RunNoShell.run(command)
         if ec != 0 and not allow_failure:
-            raise SCommandException(f"Command failed: {command}")
+            # Check if "Nothing added" is in the output, if so, we can ignore the error
+            if output and "Nothing added" in output:
+                logging.info("Command %s failed, but nothing was added", command)
+            else:
+                raise SCommandException(f"Command failed: {command}")
 
 
 TIER1_GPU_TO_CPU_HOURS_RATE = 12 # 12 cpus per gpu
