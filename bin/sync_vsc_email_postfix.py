@@ -21,6 +21,10 @@ import logging
 from vsc.accountpage.sync import Sync
 
 
+FIXED_VSCENTRUM_ALIASES = {
+    'compute@vscentrum.be': 'compute.vscentrum@ugent.be',
+}
+
 
 class VscPostfixSync(Sync):
     CLI_OPTIONS = {
@@ -43,6 +47,7 @@ class VscPostfixSync(Sync):
             return
 
         active_emails = {f"{a.vsc_id}@vscentrum.be": a.email for a in active_accounts}
+        active_emails.update(FIXED_VSCENTRUM_ALIASES)
         inactive_emails = {f"{a.vsc_id}@vscentrum.be" for a in inactive_accounts}
 
         logging.debug("active emails: %s", active_emails)
