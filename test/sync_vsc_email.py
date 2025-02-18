@@ -79,6 +79,7 @@ class TestVscPostfixSync(TestCase):
             self.assertEqual(c.read(), "\n".join(oldmap))  # dryrun
 
         newmap = [
+            "compute@vscentrum.be compute.vscentrum@ugent.be\n",
             "vsc40001@vscentrum.be huppel@bar.com\n",
             "vsc40002@vscentrum.be foo2@bar.com\n",
         ]
