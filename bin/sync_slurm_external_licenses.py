@@ -106,7 +106,7 @@ def retrieve_license_data(license_type, tool, server, port, command_options):
             with os.fdopen(fd, 'w') as fh:
                 fh.write(f'SERVER {server} AABBCCDDEEFF {port}\n')
             # lmutil lmstat -a -c tmpfile
-            (ec, output) = RunNoShell.run([tool] + command_options + [fn])
+            (ec, output) = RunNoShell.run([tool] + command_options.split(" ") + [fn])
             if ec != 0:
                 raise Exception("Failed to run flexlm tool")
         finally:
@@ -157,7 +157,7 @@ def licenses_data(config_filename, default_tool):
         if 'tool' not in edata:
             edata['tool'] = default_tool
         if 'command_options' not in edata:
-            edata['command_options'] = "lmstat -a -c".split(" ")  # default lmutil options
+            edata['command_options'] = "lmstat -a -c"  # default lmutil options
 
         # for each name, retrieve data from server and augment software count with total and in_use data
         #    compare with total count (and report some error/warning if this goes out of sync)
