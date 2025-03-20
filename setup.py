@@ -20,7 +20,7 @@ vsc-administration distribution setup.py
 @author: Jens Timmerman (Ghent University)
 """
 from vsc.install import shared_setup
-from vsc.install.shared_setup import ag, jt
+from vsc.install.shared_setup import ag, jt, sdw, wd
 
 install_requires = [
     'vsc-accountpage-clients >= 2.1.6',
@@ -32,9 +32,9 @@ install_requires = [
 ]
 
 PACKAGE = {
-    'version': '4.8.2',
-    'author': [ag, jt],
-    'maintainer': [ag, jt],
+    'version': '4.9.0',
+    'author': [ag, jt, sdw, wd],
+    'maintainer': [ag],
     'tests_require': ['mock'],
     'setup_requires': [
         'vsc-install >= 0.15.3',
