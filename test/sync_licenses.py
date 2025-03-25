@@ -63,10 +63,10 @@ class TestSyncSlurmExtLicenses(TestCase):
         server = 'a.b.c.d'
         port = 7894
 
-        res = retrieve_license_data('NOTSUPPORTED', tool, server, port)
+        res = retrieve_license_data('NOTSUPPORTED', tool, server, port, "lmstat -a -c")
         self.assertTrue(res is None)
 
-        res = retrieve_license_data('flexlm', tool, server, port)
+        res = retrieve_license_data('flexlm', tool, server, port, "lmstat -a -c")
         logging.debug("run calls: %s", mnoshell.run.mock_calls)
         logging.debug("parse calls: %s", mparse.mock_calls)
 
@@ -115,12 +115,12 @@ class TestSyncSlurmExtLicenses(TestCase):
         name, args, kwargs = mretr.mock_calls[0]
         logging.debug("%s %s %s", name, args, kwargs)
         self.assertEqual(name, '')
-        self.assertEqual(args, ('strange', '/some/path/to/strangetool', 'abc.def', 1234))
+        self.assertEqual(args, ('strange', '/some/path/to/strangetool', 'abc.def', 1234, 'lmstat -a -c' ))
         self.assertEqual(kwargs, {})
         name, args, kwargs = mretr.mock_calls[1]
         logging.debug("%s %s %s", name, args, kwargs)
         self.assertEqual(name, '')
-        self.assertEqual(args, ('flexlm', '/some/default', 'ghi.jkl', 5678))
+        self.assertEqual(args, ('flexlm', '/some/default', 'ghi.jkl', 5678, "lmstat -a -c"))
         self.assertEqual(kwargs, {})
 
         self.assertEqual(res, {

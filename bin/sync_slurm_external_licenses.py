@@ -91,7 +91,7 @@ def _parse_lmutil(output):
     return res
 
 
-def retrieve_license_data(license_type, tool, server, port):
+def retrieve_license_data(license_type, tool, server, port, command_options):
     """
     Run tool to retrieve all license data from server/port.
     Return dict with key the toolname and value another dict with total and in_use as keys
@@ -106,7 +106,7 @@ def retrieve_license_data(license_type, tool, server, port):
             with os.fdopen(fd, 'w') as fh:
                 fh.write(f'SERVER {server} AABBCCDDEEFF {port}\n')
             # lmutil lmstat -a -c tmpfile
-            (ec, output) = RunNoShell.run([tool, 'lmstat', '-a', '-c', fn])
+            (ec, output) = RunNoShell.run([tool] + command_options.split(" ") + [fn])
             if ec != 0:
                 raise Exception("Failed to run flexlm tool")
         finally:
@@ -156,10 +156,19 @@ def licenses_data(config_filename, default_tool):
             edata['license_type'] = FLEXLM
         if 'tool' not in edata:
             edata['tool'] = default_tool
+        if 'command_options' not in edata:
+            edata['command_options'] = "lmstat -a -c"  # default lmutil options
+
         # for each name, retrieve data from server and augment software count with total and in_use data
         #    compare with total count (and report some error/warning if this goes out of sync)
         #       if server is unreachable, set number in_use equal to count: i.e. all is in use
-        lics = retrieve_license_data(edata['license_type'], edata['tool'], edata['server'], edata['port'])
+        lics = retrieve_license_data(
+            edata['license_type'],
+            edata['tool'],
+            edata['server'],
+            edata['port'],
+            edata['command_options']
+        )
 
         eknown = set(lics.keys())
 
