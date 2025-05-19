@@ -43,7 +43,7 @@ class ScontrolTypes(Enum):
 ScontrolReservationFields = [
     'ReservationName', 'StartTime', 'EndTime', 'Duration', 'Nodes', 'NodeCnt', 'CoreCnt',
     'Features', 'PartitionName', 'Flags', 'TRES', 'Users', 'Groups', 'Accounts', 'Licenses',
-    'State', 'BurstBuffer', 'Watts', 'MaxStartDelay',
+    'State', 'BurstBuffer', 'MaxStartDelay',
 ]
 
 ScontrolLicenseFields = [

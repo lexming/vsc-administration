@@ -47,15 +47,15 @@ class SlurmScontrolTest(TestCase):
 
         # test reservation output
         scontrol_output = [
-            "ReservationName=hpc123 StartTime=2022-03-28T16:05:00 EndTime=2028-05-28T07:59:59 Duration=2252-15:54:59 Nodes=node123,node456 NodeCnt=2 CoreCnt=512 Features=(null) PartitionName=(null) Flags=MAINT,IGNORE_JOBS,SPEC_NODES TRES=cpu=512 Users=vscabc,vscdef Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a MaxStartDelay=(null)",
-            "ReservationName=hellohello StartTime=2022-04-19T08:00:00 EndTime=2022-05-19T08:00:00 Duration=30-00:00:00 Nodes=nodeone,nodetwo,nodethree,nodefour NodeCnt=4 CoreCnt=8 Features=(null) PartitionName=party Flags= TRES=cpu=8 Users=(null) Groups=groupies Accounts=myaccount Licenses=(null) State=ACTIVE BurstBuffer=(null) Watts=n/a MaxStartDelay=(null)",
+            "ReservationName=hpc123 StartTime=2022-03-28T16:05:00 EndTime=2028-05-28T07:59:59 Duration=2252-15:54:59 Nodes=node123,node456 NodeCnt=2 CoreCnt=512 Features=(null) PartitionName=(null) Flags=MAINT,IGNORE_JOBS,SPEC_NODES TRES=cpu=512 Users=vscabc,vscdef Groups=(null) Accounts=(null) Licenses=(null) State=ACTIVE BurstBuffer=(null) MaxStartDelay=(null)",
+            "ReservationName=hellohello StartTime=2022-04-19T08:00:00 EndTime=2022-05-19T08:00:00 Duration=30-00:00:00 Nodes=nodeone,nodetwo,nodethree,nodefour NodeCnt=4 CoreCnt=8 Features=(null) PartitionName=party Flags= TRES=cpu=8 Users=(null) Groups=groupies Accounts=myaccount Licenses=(null) State=ACTIVE BurstBuffer=(null) MaxStartDelay=(null)",
         ]
 
         info = parse_scontrol_dump(scontrol_output, ScontrolTypes.reservation)
 
         self.assertEqual(info, set([
-            SlurmReservation(ReservationName='hpc123', StartTime='2022-03-28T16:05:00', EndTime='2028-05-28T07:59:59', Duration='2252-15:54:59', Nodes='node123,node456', NodeCnt='2', CoreCnt='512', Features=None, PartitionName=None, Flags='MAINT,IGNORE_JOBS,SPEC_NODES', TRES='cpu=512', Users='vscabc,vscdef', Groups=None, Accounts=None, Licenses=None, State='ACTIVE', BurstBuffer=None, Watts='n/a', MaxStartDelay=None),
-            SlurmReservation(ReservationName='hellohello', StartTime='2022-04-19T08:00:00', EndTime='2022-05-19T08:00:00', Duration='30-00:00:00', Nodes='nodeone,nodetwo,nodethree,nodefour', NodeCnt='4', CoreCnt='8', Features=None, PartitionName='party', Flags='', TRES='cpu=8', Users=None, Groups='groupies', Accounts='myaccount', Licenses=None, State='ACTIVE', BurstBuffer=None, Watts='n/a', MaxStartDelay=None),
+            SlurmReservation(ReservationName='hpc123', StartTime='2022-03-28T16:05:00', EndTime='2028-05-28T07:59:59', Duration='2252-15:54:59', Nodes='node123,node456', NodeCnt='2', CoreCnt='512', Features=None, PartitionName=None, Flags='MAINT,IGNORE_JOBS,SPEC_NODES', TRES='cpu=512', Users='vscabc,vscdef', Groups=None, Accounts=None, Licenses=None, State='ACTIVE', BurstBuffer=None, MaxStartDelay=None),
+            SlurmReservation(ReservationName='hellohello', StartTime='2022-04-19T08:00:00', EndTime='2022-05-19T08:00:00', Duration='30-00:00:00', Nodes='nodeone,nodetwo,nodethree,nodefour', NodeCnt='4', CoreCnt='8', Features=None, PartitionName='party', Flags='', TRES='cpu=8', Users=None, Groups='groupies', Accounts='myaccount', Licenses=None, State='ACTIVE', BurstBuffer=None, MaxStartDelay=None),
         ]))
 
         # test license output
