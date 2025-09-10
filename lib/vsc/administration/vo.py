@@ -23,6 +23,7 @@ Original Perl code by Stijn De Weirdt
 """
 
 import copy
+import grp
 import logging
 import os
 import pwd
@@ -36,7 +37,7 @@ from vsc.administration.tools import quota_limits
 from vsc.config.base import (
     VSC, VSC_HOME, VSC_DATA, VSC_DATA_SHARED, NEW, MODIFIED, MODIFY, ACTIVE, GENT, DATA_KEY, SCRATCH_KEY,
     DEFAULT_VOS_ALL, VSC_PRODUCTION_SCRATCH, INSTITUTE_VOS_BY_INSTITUTE, VO_SHARED_PREFIX_BY_INSTITUTE,
-    VO_PREFIX_BY_INSTITUTE, STORAGE_SHARED_SUFFIX
+    VO_PREFIX_BY_INSTITUTE, STORAGE_ACL_VO_MOD_GRP_KEY, STORAGE_SHARED_SUFFIX,
 )
 from vsc.utils.missing import Monoid, MonoidDict
 
@@ -199,6 +200,22 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
             storage.operator().chown(pwd.getpwnam('nobody').pw_uid, fileset_group_owner_id, path)
         else:
             storage.operator().chown(moderator.vsc_id_number, fileset_group_owner_id, path)
+
+        # add ACLs to control access to VO by moderator group
+        if storage.acl_permissions_vo:
+            try:
+                vo_modgrp_name = f"{self.vo.vsc_id}_mod"
+                vo_modgrp_gid = grp.getgrnam(vo_modgrp_name).gr_gid
+            except KeyError:
+                logging.exception("VO moderator group does not exist: %s", vo_modgrp_name)
+                raise
+
+            # replace placeholders in ACLs with actual values
+            acl_template_values = {
+                STORAGE_ACL_VO_MOD_GRP_KEY: vo_modgrp_gid,
+            }
+            acl_rules = [rule.format(**acl_template_values) for rule in storage.acl_permissions_vo]
+            storage.operator().replace_acl(path, acl_rules)
 
     def create_data_fileset(self):
         """Create the VO's directory on the HPC data filesystem. Always set the quota."""
