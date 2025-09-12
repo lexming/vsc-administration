@@ -215,6 +215,7 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
                 STORAGE_ACL_VO_MOD_GRP_KEY: vo_modgrp_gid,
             }
             acl_rules = [rule.format(**acl_template_values) for rule in storage.acl_permissions_vo]
+            logging.debug(f"Setting ACLs on VO {self.vo.vsc_id} root directory: {', '.join(acl_rules)}")
             storage.operator().replace_acl(path, acl_rules)
 
     def create_data_fileset(self):
