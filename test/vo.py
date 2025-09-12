@@ -455,17 +455,17 @@ class VoDeploymentTest(TestCase):
                 },
             ],
         )
+        mc.vo[test_vo_id].modgroup.get.return_value = (
+            200,
+            {
+                'vsc_id': 'bvo99999_mods',
+                'vsc_id_number': 9999999,
+            },
+        )
 
-        with (
-            patch('vsc.administration.base.StorageOperator') as mock_storage_operator,
-            patch('grp.getgrnam') as mock_getgrnam,
-        ):
+        with patch('vsc.administration.base.StorageOperator') as mock_storage_operator:
             operator = mock.MagicMock()
             mock_storage_operator.return_value = operator
-
-            mock_group = mock.MagicMock()
-            mock_group.gr_gid = 999
-            mock_getgrnam.return_value = mock_group
 
             # This shouldn't do anything
             ok, errors = vo.process_vos(options, [test_vo_id], VSC_HOME, mc, date, host_institute=BRUSSEL)
@@ -498,7 +498,7 @@ class VoDeploymentTest(TestCase):
             )
             operator().replace_acl.assert_called_with(
                 "/vscmnt/brussel_pixiu_data/_data_brussel/brussel/vo/000/bvo00005",
-                ['A:d:OWNER@:rwaDdxtTnNcoy', 'A:fdg:999:rwaDdxtTnNcoy']
+                ['A:d:OWNER@:rwaDdxtTnNcoy', 'A:fdg:9999999:rwaDdxtTnNcoy']
             )
 
             # VSC_SCRATCH test
@@ -523,7 +523,7 @@ class VoDeploymentTest(TestCase):
             )
             operator().replace_acl.assert_called_with(
                 "/rhea/scratch/brussel/vo/000/bvo00005",
-                ['A:d:OWNER@:rwaDdxtTnNcoy', 'A:fdg:999:rwaDdxtTnNcoy']
+                ['A:d:OWNER@:rwaDdxtTnNcoy', 'A:fdg:9999999:rwaDdxtTnNcoy']
             )
 
     @patch("vsc.accountpage.client.AccountpageClient", autospec=True)
@@ -808,17 +808,17 @@ class VoDeploymentTest(TestCase):
                 },
             ],
         )
+        mc.vo[test_vo_id].modgroup.get.return_value = (
+            200,
+            {
+                'vsc_id': 'bvo99999_mods',
+                'vsc_id_number': 9999999,
+            },
+        )
 
-        with (
-            patch('vsc.administration.base.StorageOperator') as mock_storage_operator,
-            patch('grp.getgrnam') as mock_getgrnam,
-        ):
+        with patch('vsc.administration.base.StorageOperator') as mock_storage_operator:
             operator = mock.MagicMock()
             mock_storage_operator.return_value = operator
-
-            mock_group = mock.MagicMock()
-            mock_group.gr_gid = 999
-            mock_getgrnam.return_value = mock_group
 
             # This shouldn't do anything
             ok, errors = vo.process_vos(options, [test_vo_id], VSC_HOME, mc, date, host_institute=BRUSSEL)
@@ -852,5 +852,5 @@ class VoDeploymentTest(TestCase):
             )
             operator().replace_acl.assert_called_with(
                 "/rhea/scratch/brussel/vo/000/bvo00003",
-                ['A:d:OWNER@:rwaDdxtTnNcoy', 'A:fdg:999:rwaDdxtTnNcoy']
+                ['A:d:OWNER@:rwaDdxtTnNcoy', 'A:fdg:9999999:rwaDdxtTnNcoy']
             )

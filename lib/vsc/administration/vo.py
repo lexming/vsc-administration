@@ -23,7 +23,6 @@ Original Perl code by Stijn De Weirdt
 """
 
 import copy
-import grp
 import logging
 import os
 import pwd
@@ -93,7 +92,7 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
         self._vo_data_shared_quota_cache = None
         self._vo_scratch_quota_cache = None
         self._institute_quota_cache = None
-
+        self._modgroup_cache = None
         self._sharing_group_cache = None
 
     @property
@@ -165,6 +164,20 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
         """Return a list with all the VO members in it."""
         return self.vo.members
 
+    @property
+    def modgroup(self):
+        """
+        Return dict with Moderator group of the VO
+        {vsc_id: str, vsc_id_number: int, status: str, institute: {name: str},
+         members: [], moderators: [], description: str, active: bool, isactive: bool}
+        """
+        if not self._modgroup_cache:
+            self._modgroup_cache = whenHTTPErrorRaise(
+            self.rest_client.vo[self.vo.vsc_id].modgroup.get,
+            f"Could not get modgroup information from accountpage for VO {self.vo.vsc_id}"
+        )[1]
+        return self._modgroup_cache
+
     def _get_path(self, storage_name, mount_point=MOUNT_POINT_DEFAULT):
         """Get the path for the (if any) user directory on the given storage."""
         (path, _) = self.storage.path_templates[self.host_institute][storage_name]['vo'](self.vo.vsc_id)
@@ -203,16 +216,9 @@ class VscTier2AccountpageVo(VscAccountPageVo, VscTier2Accountpage):
 
         # add ACLs to control access to VO by moderator group
         if storage.acl_permissions_vo:
-            try:
-                vo_modgrp_name = f"{self.vo.vsc_id}_mod"
-                vo_modgrp_gid = grp.getgrnam(vo_modgrp_name).gr_gid
-            except KeyError:
-                logging.exception("VO moderator group does not exist: %s", vo_modgrp_name)
-                raise
-
             # replace placeholders in ACLs with actual values
             acl_template_values = {
-                STORAGE_ACL_VO_MOD_GRP_KEY: vo_modgrp_gid,
+                STORAGE_ACL_VO_MOD_GRP_KEY: self.modgroup['vsc_id_number'],
             }
             acl_rules = [rule.format(**acl_template_values) for rule in storage.acl_permissions_vo]
             logging.debug(f"Setting ACLs on VO {self.vo.vsc_id} root directory: {', '.join(acl_rules)}")
